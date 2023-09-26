@@ -1,7 +1,11 @@
+# -*- coding: utf-8 -*-
+# oOoOo Author oOoOo
+#      Rouxhero
+#-------------------
 
 import io,re
 
-from app import Middleware
+from app.core import Middleware
 
 
 class Template:
@@ -35,7 +39,16 @@ class Template:
             page = page.replace("{{"+key+"}}",val)
         return page
 
-    def __render_componnent(self,page):
+    def __render_componnent(self,page:str)->str:
+        """
+        render all componnent in page
+
+        Args:
+            page (str): the current page
+
+        Returns:
+            str: the page with componnent
+        """        
         allCompo = re.findall(r"#include\(\"[\w\.]+\"\)", page)
         print(allCompo)
         if allCompo != []:
