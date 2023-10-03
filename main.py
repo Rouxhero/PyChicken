@@ -1,9 +1,7 @@
-
 # -*- coding: utf-8 -*-
 # oOoOo Author oOoOo
 #      Rouxhero
-#-------------------
-
+# -------------------
 import cherrypy
 import os
 
@@ -24,16 +22,13 @@ from app.core import WebApp
     Welcome on CherryPy FrameWork
 """
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     conf = {
-        '/': {
-            'tools.sessions.on': True,
-            'request.dispatch': WebApp().router,
-            'tools.staticdir.root': os.path.abspath(os.getcwd())
+        "/": {
+            "tools.sessions.on": True,
+            "request.dispatch": WebApp().router,
+            "tools.staticdir.root": os.path.abspath(os.getcwd()),
         },
-        '/static': {
-            'tools.staticdir.on': True,
-            'tools.staticdir.dir': './public'
-        }
+        "/static": {"tools.staticdir.on": True, "tools.staticdir.dir": "./public"},
     }
-    cherrypy.quickstart(None, '/', conf)
+    cherrypy.quickstart(None, "/", conf)

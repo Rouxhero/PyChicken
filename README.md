@@ -1,5 +1,5 @@
 # PyChicken
-![](doc/logo.png)
+![](docs/logo.png)
 Little WebFramework With CherryPy
 
 # Author

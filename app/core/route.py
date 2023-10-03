@@ -1,8 +1,11 @@
+# -*- coding: utf-8 -*-
+# oOoOo Author oOoOo
+#      Rouxhero
+# -------------------
 
 
 class Route:
-
-    def __init__(self,path:str,method:str,controller,handler:str):
+    def __init__(self, path: str, method: str, controller, handler: str):
         """
         Route constructor.
 
@@ -16,4 +19,3 @@ class Route:
         self.method = method
         self.controller = controller
         self.handler = handler
-        
