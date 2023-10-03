@@ -1,4 +1,4 @@
-# CherryPyFramework
+#PyChicken
 Little WebFramework With CherryPy
 
 # Author
