@@ -1,0 +1,15 @@
+{
+
+    "database":{
+        "host"     : "localhost",
+        "user"     : "root",
+        "password" : "",
+        "database"  : ""
+    },
+    "smtp":{
+        "host"     : "smtp.mail.com",
+        "port"     : 587,
+        "user"     : "",
+        "password" : ""
+    }
+}

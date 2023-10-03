@@ -1,22 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{appname}}</title>
+    <title>'CherryPy FrameWork'</title>
     <link rel="stylesheet" href="/static/css/commoncss.css">
-    <link rel="stylesheet" href="/static/js/js.js">
 </head>
 
 <body>
-    <h1>{{var}}</h1>
 
-
-    <div>
-        #include("components.input")
-    </div>
-
+    <main>
+        {% block content %}{% endblock %}
+    </main>
 </body>
 
 </html>

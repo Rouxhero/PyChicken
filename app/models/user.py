@@ -3,15 +3,16 @@
 #      Rouxhero
 #-------------------
 
-from app.core import Model
+from app.models.core import Model
 
-def User(Model):
-
-    fields = [
-                  "username",
-                  "password",
-                  "email"
-            ]  
+class User(Model):
+    
+    fields = {
+                "username":"",
+                "password":"",
+                "email":"",
+                "age":0
+    } 
 
 
 

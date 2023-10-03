@@ -5,41 +5,30 @@
 #-------------------
 
 import cherrypy
-from app.core import Middleware,Template,Database,Model
 import os
 
-from app.models.user import User
+from app.core.tools import log
+from app.core import WebApp
 
+"""
+   _____ _                          _____         ______                     __          __        _    
+  / ____| |                        |  __ \       |  ____|                    \ \        / /       | |   
+ | |    | |__   ___ _ __ _ __ _   _| |__) |   _  | |__ _ __ __ _ _ __ ___   __\ \  /\  / /__  _ __| | __
+ | |    | '_ \ / _ \ '__| '__| | | |  ___/ | | | |  __| '__/ _` | '_ ` _ \ / _ \ \/  \/ / _ \| '__| |/ /
+ | |____| | | |  __/ |  | |  | |_| | |   | |_| | | |  | | | (_| | | | | | |  __/\  /\  / (_) | |  |   < 
+  \_____|_| |_|\___|_|  |_|   \__, |_|    \__, | |_|  |_|  \__,_|_| |_| |_|\___| \/  \/ \___/|_|  |_|\_\ 
+                               __/ |       __/ |                                                        
+                              |___/       |___/                                                         
 
-db = Database(
-    host='localhost',
-    user='root',
-    password='',
-    database='db'
-)
-
-class WebSite(object):
-
-    def __init__(self) -> None:
-        global db
-        self.db = db
-        self.middlware = Middleware()
-        self.template = Template(self.middlware,"views")
-
-    @cherrypy.expose
-    def index(self):
-        Model.create(User,{
-            "username":"test",
-            "password":"test",
-            "email":"test@test.com"
-        })
-        return self.template.render("index",{"var":"coucou","name":"email"})
-    
+                              
+    Welcome on CherryPy FrameWork
+"""
 
 if __name__ == '__main__':
     conf = {
         '/': {
             'tools.sessions.on': True,
+            'request.dispatch': WebApp().router,
             'tools.staticdir.root': os.path.abspath(os.getcwd())
         },
         '/static': {
@@ -47,4 +36,4 @@ if __name__ == '__main__':
             'tools.staticdir.dir': './public'
         }
     }
-    cherrypy.quickstart(WebSite(), '/', conf)
+    cherrypy.quickstart(None, '/', conf)
