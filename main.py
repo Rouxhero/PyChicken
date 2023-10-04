@@ -31,4 +31,11 @@ if __name__ == "__main__":
         },
         "/static": {"tools.staticdir.on": True, "tools.staticdir.dir": "./public"},
     }
+    cherrypy.config.update({'tools.sessions.on': True,
+                        'tools.sessions.storage_type': "File",
+                        'tools.sessions.storage_path': 'cache/sessions',
+                        'tools.sessions.timeout': 10
+               })
+
+
     cherrypy.quickstart(None, "/", conf)
