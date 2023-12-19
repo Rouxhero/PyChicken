@@ -8,6 +8,7 @@ from faker import Faker
 from app.controller.core.Controller import Controller
 
 
+
 class indexController(Controller):
     """
     Exemple IndexController
@@ -20,7 +21,6 @@ class indexController(Controller):
         Returns:
             str: HTML Page
         """
-
         print(post)
         if  not 'username' in cherrypy.session:
             cherrypy.session['username'] = Faker().user_name()
