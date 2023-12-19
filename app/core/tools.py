@@ -24,13 +24,3 @@ config = Config()
 
 def hashP(password):
     return hashlib.sha256(password.encode()).hexdigest()
-
-
-def get_date_number(year: int, month: int, day: int = 1) -> int:
-    return datetime.datetime(year, month, day).day
-
-
-def date_formarter(date: str) -> str:
-    return datetime.datetime.strptime(date, "%d/%m/%Y, %H:%M PM").strftime(
-        "%Y:%m:%d %H:%M:00"
-    )

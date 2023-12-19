@@ -30,11 +30,11 @@ class Controller:
         if data is None:
             data = {}
         if not "context" in data:
-            baseURI = "http://"+ config["url"] 
-            if config['usePort']:
-                    baseURI += ":"+str(config['port'])
+            baseURI = "http://" + config["url"]
+            if config["usePort"]:
+                baseURI += ":" + str(config["port"])
             uri = "http://" + config["host"]
-            if config['usePort']:
+            if config["usePort"]:
                 uri += ":" + str(config["port"]) + "/"
             data["context"] = {
                 "basename": baseURI + "/",

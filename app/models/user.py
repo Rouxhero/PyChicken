@@ -20,5 +20,3 @@ class User(Model):
         "age": (0, "required"),
         "birthdate": (datetime.now().date(), "required"),
     }
-
-    

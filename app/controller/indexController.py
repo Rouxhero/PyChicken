@@ -6,7 +6,6 @@ from app.controller.core.Controller import Controller
 from app.core.tools import config
 
 
-
 class indexController(Controller):
     """
     Exemple IndexController
@@ -20,5 +19,5 @@ class indexController(Controller):
         Returns:
             str: HTML Page
         """
-        
-        return self.render("index",{"title":config["app_name"]})
+
+        return self.render("index", {"title": config["app_name"]})
