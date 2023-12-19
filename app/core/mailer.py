@@ -9,14 +9,15 @@ from email.mime.multipart import MIMEMultipart
 from app.core.tools import mail_env, config, log
 
 
-class Mailler:
+class Mailer:
     """
-    Mailler class for mail sending
-    """    
+    Mailer class for mail sending
+    """
+
     def __init__(self):
         """
-        Init the mailler -> Load config
-        """        
+        Init the mailer -> Load config
+        """
         self.smtp_server = config["smtp"]["host"]
         self.port = config["smtp"]["port"]
         self.sender_email = config["smtp"]["user"]
@@ -28,7 +29,7 @@ class Mailler:
 
         Returns:
             bool: Connection status
-        """        
+        """
         try:
             self.context = ssl.create_default_context()
             self.server = smtplib.SMTP(self.smtp_server, self.port)
@@ -37,10 +38,10 @@ class Mailler:
             self.server.login(self.sender_email, self.password)
             return True
         except Exception as e:
-            log(f"[red][ERROR][MAILLER] Error connecting to server {self.smtp_server}")
+            log(f"[red][ERROR][MAILER] Error connecting to server {self.smtp_server}")
             return False
 
-    def send(self, dest:str, subject:str, template:str, data:dict={})-> None:
+    def send(self, dest: str, subject: str, template: str, data: dict = {}) -> None:
         """
         prepare mail for sending and send
 
@@ -49,7 +50,7 @@ class Mailler:
             subject (str): mail subjcet
             template (str): template name in "templates/mail"
             data (dict, optional): data for template. Defaults to {}.
-        """        
+        """
         message = mail_env.get_template(template + ".html")
         output = message.render(data)
         messageO = MIMEMultipart("alternative")
@@ -62,17 +63,17 @@ class Mailler:
         messageO.attach(part2)
         self.__send(dest, messageO)
 
-    def __send(self, dest:str, message:MIMEMultipart)->None:
+    def __send(self, dest: str, message: MIMEMultipart) -> None:
         """
         Send mail
 
         Args:
             dest (str): mail receiver
             message (MIMEMultipart): message object ready
-        """        
+        """
         try:
             if self.__connect():
                 self.server.sendmail(self.sender_email, dest, message.as_string())
                 self.server.quit()
         except Exception as e:
-            log(f"[red][ERROR][MAILLER] Error sending mail {e}")
+            log(f"[red][ERROR][MAILER] Error sending mail {e}")
