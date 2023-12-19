@@ -3,7 +3,7 @@
 #      Rouxhero
 # -------------------
 import sys
-from app.core.databse import Database
+from app.core.database import Database
 from app.core.tools import log, config
 
 db = None

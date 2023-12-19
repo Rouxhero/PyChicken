@@ -6,6 +6,12 @@ __pycache__/
 # C extensions
 *.so
 
+
+tailwindcss-linux-x64
+*00Tree.html
+*.idea
+*cache
+
 # Distribution / packaging
 .Python
 build/
@@ -151,4 +157,6 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-cache/sessions/
+tailwindcss-windows-x64.exe
+
+*.lock

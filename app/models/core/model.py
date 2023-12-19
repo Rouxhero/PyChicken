@@ -3,33 +3,21 @@
 #      Rouxhero
 # -------------------
 
-from app.resources.entry import db
+import json
+from app.models.core.dbobj import DbObject
 
 
-class Model:
+class Model(DbObject):
 
-    pid: int = None
-    fields: dict = {}
+    mId: int = 0
 
-    def __init__(self) -> None:
-        pass
+    def __init__(self, kwargs={}):
+        super(Model, self).__init__(kwargs)
 
-    def update(self, **args) -> None:
-        for k in args.keys():
-            if k not in self.fields.keys():
-                raise Exception(f"[Model][Update Error] {k} is not defined !")
-        args["id"] = self.pid
-        db.update(self.__class__.__name__, args)
+    @property
+    def id(self):
+        return self.mId
 
-
-class ModelFactory:
-    @staticmethod
-    def create(aClass, **args):
-        for k in aClass.fields.keys():
-            if k not in args.keys():
-                raise Exception(f"[Model][Create Error] {k} is not defined !")
-        row = db.insert(aClass.__name__, args)
-        instance = aClass()
-        for k in row:
-            instance.fields[k] = row[k]
-        return instance
+    @id.setter
+    def id(self, value):
+        self.mId = value

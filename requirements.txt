@@ -1,4 +1,6 @@
 CherryPy==18.8.0
+Faker==18.3.1
 Jinja2==3.1.2
-mysql_connector_repackaged==0.3.1
+routes==2.5.1
 rich==13.6.0
+# mysql-connector-python==0.3.1

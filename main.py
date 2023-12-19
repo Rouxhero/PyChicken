@@ -7,6 +7,7 @@ import os
 
 from app.core.tools import log
 from app.core import WebApp
+from app.core.tools import config
 
 """
    _____ _                          _____         ______                     __          __        _    
@@ -23,6 +24,8 @@ from app.core import WebApp
 """
 
 if __name__ == "__main__":
+    cherrypy.server.socket_host = config.get("host")
+    cherrypy.server.socket_port = config.get("port")
     conf = {
         "/": {
             "tools.sessions.on": True,
@@ -31,11 +34,13 @@ if __name__ == "__main__":
         },
         "/static": {"tools.staticdir.on": True, "tools.staticdir.dir": "./public"},
     }
-    cherrypy.config.update({'tools.sessions.on': True,
-                        'tools.sessions.storage_type': "File",
-                        'tools.sessions.storage_path': 'cache/sessions',
-                        'tools.sessions.timeout': 10
-               })
-
+    cherrypy.config.update(
+        {
+            "tools.sessions.on": True,
+            "tools.sessions.storage_type": "File",
+            "tools.sessions.storage_path": "cache/sessions",
+            "tools.sessions.timeout": 10 * 60,
+        }
+    )
 
     cherrypy.quickstart(None, "/", conf)
