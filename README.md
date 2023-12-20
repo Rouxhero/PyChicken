@@ -5,9 +5,5 @@ Little WebFramework With CherryPy
 # Author
 Rouxhero
 
-See ---> [here](https://github.com/Rouxhero/PyChicken/wiki) for doc
+Read docs [here](https://github.com/Rouxhero/PyChicken/wiki)
 
-## Dev (For me 😀)
-- Request TODO
-
-```
