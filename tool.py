@@ -1,5 +1,6 @@
 import argparse
 from collections import namedtuple
+import datetime
 from rich import print as rprint
 
 
@@ -72,6 +73,7 @@ def create_controller(console: bool, empty: bool, name: str):
             rprint(", ".join(methode.params),end="")
             rprint(")")
     create_controller_file(controller)
+    rprint(f"Le controleur [bold][green]{name}[/green][/bold] a été créé avec succès")
 
 def create_controller_file(controller:Controller):
     args_ = lambda m :','+ ", ".join([f"{param}" for param in m.params])
@@ -91,7 +93,103 @@ class {controller.name}(Controller):
 """)
 
 
+Model = namedtuple("Model",["name","attr"])
+Attribute = namedtuple("Attribute",["name","type_","requierd"])
+def create_model(console: bool, empty: bool, name: str):
+    model = Model(name,[])
+    rprint(f'Création du modèle [bold][green]{name}[/green][/bold]')
+    name = name[0].upper()+name[1:]
+    if console:
+        rprint("[blue]Configuration du modèle[/blue]")
+        val = ""
+        while val != "q":
+            val = input("Ajouter le nom d'un attribut (q pour terminer): ")
+            if val != "q":
+                rprint("[blue]\tAjouter le type de l'attribut[/blue]")
+                type_ = parse_type(input("\t\tType: "))
+                while type_ == False:
+                    rprint("[red]\t\tType invalide[/red]")
+                    type_ = parse_type(input("\t\tType: "))
+                rprint("[blue]\tAjouter si l'attribut est obligatoire[/blue]")
+                requierd = input("\t\tObligatoire ([Y]es/[N]o): ") != "N" # Default True
+                model.attr.append(Attribute(val,type_,requierd))
+        rprint(f"Resumé du modèle:\n[bold][green]{name}[/green][/bold]:")
+        for attr in model.attr:
+            rprint(f"\t{attr.name} ({type(attr.type_)})")
+    create_model_file(model,name)
+    rprint(f"Le modèle [bold][green]{name}[/green][/bold] a été créé avec succès")
 
+def create_model_file(model:Model,name:str):
+    r = lambda x : "'requierd'" if x.requierd else'""'
+    attr = ",\n".join([f"\t\t'{attr.name}':({attr.type_},{r(attr)})" for attr in model.attr])
+    with open("app/models/"+name.lower()+".py","w") as f:
+        f.write("""# -*- coding: utf-8 -*-
+from datetime import datetime
+
+from app.models.core import Model
+
+
+class """+model.name+"""(Model):
+
+    fields = {
+"""+attr+""",
+    }
+""")
+        
+Pivot = namedtuple("Pivot",["name","attr"])
+def create_pivot(console: bool, empty: bool, name: str):
+    rprint(f'Création du pivot [bold][green]{name}[/green][/bold]')
+    name = name[0].upper()+name[1:]
+    pivot = Pivot(name,[])
+    if console:
+        rprint("[blue]Configuration du pivot[/blue]")
+        val = ""
+        while val != "q":
+            val = input("Ajouter le nom d'un attribut (q pour terminer): ")
+            if val != "q":
+                rprint("[blue]\tAjouter le type de l'attribut[/blue]")
+                type_ = parse_type(input("\t\tType: "))
+                while type_ == False:
+                    rprint("[red]\t\tType invalide[/red]")
+                    type_ = parse_type(input("\t\tType: "))
+                rprint("[blue]\tAjouter si l'attribut est obligatoire[/blue]")
+                requierd = input("\t\tObligatoire ([Y]es/[N]o): ") != "N" # Default True
+                pivot.attr.append(Attribute(val,type_,requierd))
+        rprint(f"Resumé du modèle:\n[bold][green]{name}[/green][/bold]:")
+        for attr in pivot.attr:
+            rprint(f"\t{attr.name} ({type(attr.type_)})")
+    create_pivot_file(pivot,name)
+    rprint(f"Le pivot [bold][green]{name}[/green][/bold] a été créé avec succès")
+
+def create_pivot_file(pivot:Pivot,name:str):
+    r = lambda x : "'requierd'" if x.requierd else'""'
+    attr = ",\n".join([f"\t\t'{attr.name}':({attr.type_},{r(attr)})" for attr in pivot.attr])
+    with open("app/models/"+name.lower()+".py","w") as f:
+        f.write("""# -*- coding: utf-8 -*-
+from datetime import datetime
+
+from app.models.core import Pivot
+
+
+class """+pivot.name+"""(Pivot):
+
+    fields = {
+"""+attr+""",
+    }
+""")
+
+def parse_type(input_:str):
+    if input_ == "int":
+        return 1
+    if input_ == "date":
+        return "datetime.datetime.now()"
+    if input_ == "str":
+        return "''"
+    if input_ == "float":
+        return float(1)
+    if input_ == "bool":
+        return True
+    return False
 
 if __name__ == '__main__':
     args = parser.parse_args()
@@ -107,9 +205,9 @@ if __name__ == '__main__':
             case 'Controller':
                 create_controller(console_option, empty_option, object_name)
             case 'Model':
-                print(f'Création d\'un modèle avec -c={console_option}, -e={empty_option} et le nom "{object_name}"')
+                create_model(console_option, empty_option, object_name)
             case 'Pivot':
-                print(f'Création d\'un pivot avec -c={console_option}, -e={empty_option} et le nom "{object_name}"')
+                create_pivot(console_option, empty_option, object_name)
             case 'Route':
                 print(f'Création d\'une route avec -c={console_option}, -e={empty_option} et le nom "{object_name}"')
     else:
