@@ -5,7 +5,7 @@
 
 from contextlib import contextmanager
 import mysql.connector
-from app.core.tools import log
+from app.tools.tools import log
 
 
 @contextmanager

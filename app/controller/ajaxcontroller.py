@@ -4,7 +4,7 @@
 # -------------------
 # Generated with python tool.py new:Controller ajaxcontroller
 from app.controller.core.Controller import Controller
-from app.core.tools import config
+from app.tools.tools import config
 
 
 class AjaxController(Controller):
