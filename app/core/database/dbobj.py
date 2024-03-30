@@ -1,14 +1,15 @@
 from collections.abc import MutableMapping
 import datetime
 import json
-from app.tools.function import date_formarter
-from app.resources.entry import db
 
+
+
+global db
 
 class DbObject(MutableMapping):
 
     fields: dict = []
-
+    
     def __init__(self, kwargs={}):
         self.iFields = dict((k.name, (k.type,k.requierd)) for k in self.fields)
         self.changes = dict((k.name, k.type) for k in self.fields)
@@ -16,6 +17,7 @@ class DbObject(MutableMapping):
             self._create(**kwargs)
 
     def _create(self, **args) -> None:
+        
         for k in self.fields:
             if k.name not in args.keys() and k.requierd:
                 raise KeyError(

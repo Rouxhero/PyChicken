@@ -1,7 +1,7 @@
 import cherrypy
 
 
-def auth(func):
+def protected_route(func):
     def wrapper(*args, **kwargs):
         if not cherrypy.session.get("id_user"):
             raise cherrypy.HTTPRedirect("/auth/login")

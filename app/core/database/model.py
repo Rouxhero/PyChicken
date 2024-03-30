@@ -4,7 +4,7 @@
 # -------------------
 
 import json
-from app.models.core.dbobj import DbObject
+from app.core.database.dbobj import DbObject
 
 
 class Model(DbObject):

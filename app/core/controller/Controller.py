@@ -3,7 +3,7 @@
 #      Rouxhero
 # -------------------
 import cherrypy
-from app.tools.tools import env, config
+from app.core.tools import env, config
 
 
 
@@ -32,7 +32,6 @@ class Controller:
         Returns:
             str: _description_
         """
-        from app.design import front
         if data is None:
             data = {}
         if not "context" in data:
@@ -47,9 +46,6 @@ class Controller:
                 "uri": uri + "/",
                 "session": cherrypy.session,
             }
-            if self.page is not None:
-                front.add_component("page", self.page)
-            data["front"] = front
             data["routes"] = config["routes"]
 
         for c in code:

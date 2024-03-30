@@ -2,9 +2,10 @@
 # oOoOo Author oOoOo
 #      Rouxhero
 # -------------------
-import cherrypy
-from app.resources.entry import db
-from app.route import routes
+import cherrypy,sys
+from app.core.db import db
+
+from web_routes import routes
 
 
 class WebApp(object):

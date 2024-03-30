@@ -6,7 +6,7 @@ import cherrypy
 import os
 
 from app.core.webapp import WebApp
-from app.tools.tools import config
+from app.core.tools import config
 
 """
    _____ _                          _____         ______                     __          __        _    
