@@ -3,7 +3,11 @@
 #      Rouxhero
 # -------------------
 import cherrypy
-from app.core.tools import env, config
+from app.tools.tools import env, config
+
+
+
+code = ["error", "success", "warning"]
 
 
 class Controller:
@@ -15,6 +19,7 @@ class Controller:
         self.error = ""
         self.success = ""
         self.warning = ""
+        self.page = None
 
     def render(self, name: str, data: dict = None) -> str:
         """
@@ -27,6 +32,7 @@ class Controller:
         Returns:
             str: _description_
         """
+        from app.design import front
         if data is None:
             data = {}
         if not "context" in data:
@@ -41,24 +47,20 @@ class Controller:
                 "uri": uri + "/",
                 "session": cherrypy.session,
             }
-        if "redirect_error" in cherrypy.session.keys():
-            data["context"]["error"] = cherrypy.session["redirect_error"]
-            cherrypy.session["redirect_error"] = ""
-        if "redirect_success" in cherrypy.session.keys():
-            data["context"]["success"] = cherrypy.session["redirect_success"]
-            cherrypy.session["redirect_success"] = ""
-        if "redirect_warning" in cherrypy.session.keys():
-            data["context"]["warning"] = cherrypy.session["redirect_warning"]
-            cherrypy.session["redirect_warning"] = ""
-        if self.error != "":
-            data["context"]["error"] = self.error
-            self.error = ""
-        if self.success != "":
-            data["context"]["success"] = self.success
-            self.success = ""
-        if self.warning != "":
-            data["context"]["warning"] = self.warning
-            self.warning = ""
+            if self.page is not None:
+                front.add_component("page", self.page)
+            data["front"] = front
+            data["routes"] = config["routes"]
+
+        for c in code:
+            rc = "redirect_"+c
+            if rc in cherrypy.session.keys():
+                data["context"][c] = cherrypy.session[rc]
+                cherrypy.session[rc] = ""
+        for c in code:
+            if self.__getattribute__(c) != "":
+                data["context"][c] = self.__getattribute__(c)
+                self.__setattr__(c, "")
 
         template = env.get_template(name + ".html")
         output = template.render(data)

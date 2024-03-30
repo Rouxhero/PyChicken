@@ -1,25 +1,25 @@
 from collections.abc import MutableMapping
 import datetime
 import json
-from app.core.tools import date_formarter
+from app.tools.function import date_formarter
 from app.resources.entry import db
 
 
 class DbObject(MutableMapping):
 
-    fields: dict = {}
+    fields: dict = []
 
     def __init__(self, kwargs={}):
-        self.iFields = self.fields.copy()
-        self.changes = dict((k, self.iFields[k][0]) for k in self.fields.keys())
+        self.iFields = dict((k.name, (k.type,k.requierd)) for k in self.fields)
+        self.changes = dict((k.name, k.type) for k in self.fields)
         if kwargs != {}:
             self._create(**kwargs)
 
     def _create(self, **args) -> None:
-        for k in self.fields.keys():
-            if k not in args.keys() and self.fields[k][1] == "required":
+        for k in self.fields:
+            if k.name not in args.keys() and k.requierd:
                 raise KeyError(
-                    f"[Model][{self.__class__.__name__}][Create Error] {k} is not defined !"
+                    f"[Model][{self.__class__.__name__}][Create Error] {k.name} is not defined !"
                 )
         row = db.insert(self.__class__.__name__, args, hasattr(self, "mId"))
         self.__load_row(self, row)
@@ -33,11 +33,10 @@ class DbObject(MutableMapping):
                 raise KeyError(
                     f"[Model][{self.__class__.__name__}][Get Error] {k} is not defined !"
                 )
+        fields = dict((k.name,[k.type,k.requierd]) for k in self.fields)
         if hasattr(self, "mId"):
-            fields = self.fields.copy()
             fields["id"] = ["int", "required"]
-        else:
-            fields = self.fields.copy()
+
         row = db.select(self.__class__.__name__, args, fields)
         if row == None:
             return None
@@ -50,11 +49,9 @@ class DbObject(MutableMapping):
                 raise KeyError(
                     f"[Model][{self.__class__.__name__}][Get Error] {k} is not defined !"
                 )
+        fields = dict((k.name,[k.type,k.requierd]) for k in self.fields)
         if hasattr(self, "mId"):
-            fields = self.fields.copy()
             fields["id"] = ["int", "required"]
-        else:
-            fields = self.fields.copy()
         row = db.select(self.__class__.__name__, args, fields, -1)
         if row == None:
             return []
@@ -63,23 +60,23 @@ class DbObject(MutableMapping):
     def __load_row(self, dest, row):
         if hasattr(dest, "mId"):
             dest.mId = row["id"]
-        for k in list(dest.fields.keys()):
-            dest = self.append_field(dest, k, row[k])
+        for k in dest.fields:
+            dest = self.append_field(dest, k, row[k.name])
         return dest
 
     def append_field(self, dest, k, v):
         if k == None:
             return dest
-        elif type(dest.fields[k][0]) == dict:
-            dest[k] = json.loads(v)
-        elif type(dest.fields[k][0]) == list:
-            dest[k] = json.loads(v)
-        elif type(dest.fields[k][0]) == int:
-            dest[k] = int(v)
-        elif type(dest.fields[k][0]) == bool:
-            dest[k] = bool(v)
+        elif k.type == dict:
+            dest[k.name] = json.loads(v)
+        elif k.type == list:
+            dest[k.name] = json.loads(v)
+        elif k.type == int:
+            dest[k.name] = int(v)
+        elif k.type == bool:
+            dest[k.name] = bool(v)
         else:
-            dest[k] = v
+            dest[k.name] = v
         return dest
 
     def delete(self):
@@ -89,20 +86,21 @@ class DbObject(MutableMapping):
             db.delete(self.__class__.__name__, self.iFields)
 
     def __delitem__(self, key):
-        if key not in self.fields:
+        if not any(key == k.name for k in self.fields):
             raise KeyError(
                 f"[Model][{self.__class__.__name__}][Del Error] {key} is not defined !"
             )
         self.iFields[key] = None
 
     def __setitem__(self, key, value):
-        if not key in self.fields:
+        if not any(key == k.name for k in self.fields):
             raise KeyError(
                 f"[Model][{self.__class__.__name__}][Set Error] {key} is not defined !"
             )
-        if type(value) != type(self.fields[key][0]) and value != None:
+        f = [k for k in self.fields if k.name == key][0]
+        if type(value) != f.type and value != None:
             raise TypeError(
-                f"[Model][{self.__class__.__name__}][Set Error] {key} is {type(self.fields[key][0])} not  {type(value)} !"
+                f"[Model][{self.__class__.__name__}][Set Error] {key} is {f.type} not  {type(value)} !"
             )
         if not type(self.iFields[key]) == tuple:
             self.changes[key] = self.iFields[key]
@@ -111,7 +109,7 @@ class DbObject(MutableMapping):
         self.iFields[key] = value
 
     def __getitem__(self, key):
-        if key not in self.fields:
+        if not any(key == k.name for k in self.fields):
             raise KeyError(
                 f"[Model][{self.__class__.__name__}][Get Error] {key} is not defined !"
             )

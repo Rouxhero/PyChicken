@@ -6,7 +6,7 @@ import smtplib, ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-from app.core.tools import mail_env, config, log
+from app.tools.tools import mail_env, config, log
 
 
 class Mailer:

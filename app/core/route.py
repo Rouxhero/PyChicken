@@ -17,5 +17,18 @@ class Route:
         """
         self.path = path
         self.method = method
+        self.name_ = ""
         self.controller = controller
         self.handler = handler
+    
+    def name(self, name: str):
+        """
+        Set the name of the route
+
+        Args:
+            name (str): Name of the route
+        """
+        self.name_ = name
+        return self
+    def __str__(self):
+        return f"{self.path}"

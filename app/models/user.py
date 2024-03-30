@@ -1,22 +1,18 @@
 # -*- coding: utf-8 -*-
-# oOoOo Authors oOoOo
-#      Rouxhero
-#      Alexandre
-# -------------------
-from datetime import datetime
+import datetime
+
+from app.models.core import Model,Fields
 
 
-from app.core.tools import hashP
-from app.models.core import Model
+class User (Model):
 
-
-class User(Model):
-
-    fields = {
-        "email": ("", "required"),
-        "firstname": ("", "required"),
-        "lastname": ("", "required"),
-        "password": ("", "required"),
-        "age": (0, "required"),
-        "birthdate": (datetime.now().date(), "required"),
-    }
+    fields = [
+		Fields('username',str,requierd=True),
+		# Fields('firstname',str,requierd=True),
+		# Fields('lastname',str,requierd=True),
+		# Fields('email',str,requierd=True),
+		# Fields('birth',datetime.datetime,requierd=True),
+		Fields('password',str,requierd=True),
+		Fields('phone',int,requierd=True),
+		# Fields('email_verified',bool,requierd=True,default=False),
+	]

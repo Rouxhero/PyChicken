@@ -4,7 +4,8 @@
 # -------------------
 import sys
 from app.core.database import Database
-from app.core.tools import log, config
+from app.tools.tools import log, config
+
 
 db = None
 try:
@@ -13,3 +14,4 @@ try:
     log(f"[green][INFO][DataBase] Database connected ! ")
 except Exception as e:
     log(f"[red]{e}\n[ERROR][DataBase] No database connected")
+

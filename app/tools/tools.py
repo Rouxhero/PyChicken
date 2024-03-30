@@ -10,6 +10,7 @@ import cherrypy
 from app.core.config import Config
 import hashlib
 
+
 # Logs
 console = Console()
 log = lambda x: console.log(x)
@@ -20,7 +21,9 @@ env = Environment(loader=FileSystemLoader("./app/resources/views"))
 mail_env = Environment(loader=FileSystemLoader("./app/resources/mails"))
 # Configuration
 config = Config()
-
+from app.tools.routes import routes_loader
+config["routes"] =  routes_loader
 
 def hashP(password):
     return hashlib.sha256(password.encode()).hexdigest()
+
