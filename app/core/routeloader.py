@@ -34,6 +34,10 @@ class RouteLoader(MutableMapping):
     def __len__(self):
         return len(self.routes)
     
-    def get(self, key):
-        return self[key]
+    def get(self, key,default=None):
+        try:
+            return self[key]
+        except KeyError:
+            return default
+
         

@@ -18,12 +18,12 @@ def managed_instance(host: str, user: str, password: str, database: str):
         )
         yield conn
     except Exception as e:
+        conn.rollback() 
         raise ConnectionError(
             "[DataBase][Connection Error] Connection failed ! : " + str(e)
         )
     finally:
         if conn is not None:
-            conn.commit()
             conn.close()
 
 
@@ -48,6 +48,16 @@ class Database:
         with managed_instance(**self.creed) as conn:
             cursor = conn.cursor()
 
+    def execute(self,sql: str):
+        with managed_instance(**self.creed) as conn:
+            cursor = conn.cursor()
+            cursor.execute(sql)
+            print(cursor.fetchall())
+            print(cursor.description)
+            
+    def commit(self):
+        with managed_instance(**self.creed) as conn:
+            conn.commit()
     def insert(self, table: str, values: dict, hasId: bool = False) -> dict:
         """
         Insert value in db

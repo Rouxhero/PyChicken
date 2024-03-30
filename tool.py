@@ -1,8 +1,9 @@
 import argparse
 from collections import namedtuple
 import datetime
+import os
 from rich import print as rprint
-
+import importlib.util
 
 
 # Créez le parser principal
@@ -33,11 +34,11 @@ pivot_parser.add_argument('-c', '--console', action='store_true', help='Option p
 pivot_parser.add_argument('-e', '--empty', action='store_true', help='Option pour créer un objet vide(default)')
 pivot_parser.add_argument('name', type=validate_name, help='Nom de l\'objet à créer')
 
-# Sous-commande pour 'Route'
-route_parser = subparsers.add_parser('new:Route', help='Créer une route')
-route_parser.add_argument('-c', '--console', action='store_true', help='Option pour la console')
-route_parser.add_argument('-e', '--empty', action='store_true', help='Option pour créer un objet vide(default)')
-route_parser.add_argument('name', type=validate_name, help='Nom de l\'objet à crée ')
+
+# Command pour creer les tables SQL
+parser.add_argument("-tables" , help="Créer les tables SQL", action="store_true")
+
+
 
 Controller = namedtuple('Controller', ['name', 'methodes'])
 Method = namedtuple('Method', ['name', 'params'])
@@ -92,6 +93,47 @@ class {controller.name}(Controller):
 
 """)
 
+
+# SQL table creation
+def import_all_classes_from_file(file_path):
+    spec = importlib.util.spec_from_file_location("module_name", file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    classes = [cls for cls in module.__dict__.values() if isinstance(cls, type)]
+    return list(c for c in classes if c.__name__ != 'Model' and c.__name__ != "Pivot" and c.__class__.__name__ != "type")[0]
+
+def create_table_from_model(model):
+    requiered = lambda x : "NOT NULL" if x[1] == "requierd"  else "" 
+    fields = ",\n".join( x.__str__() for x in model.fields)
+    ids = "\tid int NOT NULL AUTO_INCREMENT PRIMARY KEY ,\n" if model.__base__.__name__ == "Model" else ""
+
+    return f"""  
+    CREATE TABLE {model.__name__.lower()}  (
+{ids}{fields}
+    )"""
+             
+
+
+
+def run_tables():
+    from app.resources.entry import db
+    SQL = ""
+    db.execute("SET foreign_key_checks = 0")
+    db.commit()
+    for path,_,files in os.walk("app/models"):
+        if path == "app/models":
+            for file in files:
+                if file.endswith(".py"):
+                    model = import_all_classes_from_file(path+"/"+file)
+                    print("Création de la table "+model.__name__.lower())
+                    db.execute(f"DROP TABLE IF EXISTS {model.__name__.lower()};")
+                    SQL = create_table_from_model(model)
+                    print(SQL)
+                    db.execute(SQL)
+                    db.commit()
+    db.execute("SET foreign_key_checks = 1")
+    db.commit()
 
 Model = namedtuple("Model",["name","attr"])
 Attribute = namedtuple("Attribute",["name","type_","requierd"])
@@ -178,6 +220,9 @@ class """+pivot.name+"""(Pivot):
     }
 """)
 
+
+
+
 def parse_type(input_:str):
     if input_ == "int":
         return 1
@@ -208,10 +253,10 @@ if __name__ == '__main__':
                 create_model(console_option, empty_option, object_name)
             case 'Pivot':
                 create_pivot(console_option, empty_option, object_name)
-            case 'Route':
-                print(f'Création d\'une route avec -c={console_option}, -e={empty_option} et le nom "{object_name}"')
+    elif args.tables:
+        run_tables()
     else:
-        print('Aucune sous-commande spécifiée')
+        parser.print_help()
 
 
 
